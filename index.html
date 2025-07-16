@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>เว็บไซต์ออกรางวัลพร้อมกัน</title>
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      background: linear-gradient(to bottom, #fff0f5, #ffe4e1);
+      text-align: center;
+      margin: 0;
+      padding-top: 70px;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #d9230f;
+      color: white;
+      padding: 15px 0;
+      font-size: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    .navbar nav {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .navbar a:hover {
+      color: #ffe4e1;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #d9230f;
+      margin-bottom: 20px;
+    }
+
+    .wheel-group {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin: 30px 0;
+    }
+
+    .wheel {
+      font-size: 48px;
+      margin: 10px;
+      padding: 15px 30px;
+      border-radius: 12px;
+      background: #f9f9f9;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+      min-width: 150px;
+    }
+
+    .label {
+      font-size: 16px;
+      margin-top: 10px;
+      color: #333;
+    }
+
+    .buttons button {
+      padding: 14px 28px;
+      font-size: 18px;
+      border: none;
+      background: #d9230f;
+      color: white;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 20px;
+    }
+
+    .buttons button:hover {
+      background: #a91b0c;
+    }
+
+    .history {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .history h2 {
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background: #fce4e4;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 40px;
+      padding: 15px;
+      background: #f0f0f0;
+      font-size: 14px;
+      color: #555;
+      border-top: 1px solid #ddd;
+    }
+
+    @media screen and (max-width: 600px) {
+      .wheel {
+        font-size: 36px;
+        min-width: 100px;
+      }
+
+      .navbar nav {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ NAVBAR -->
+  <div class="navbar">
+    <nav>
+      <a href="#">หน้าหลัก</a>
+      <a href="#">เกี่ยวกับ</a>
+      <a href="#">ติดต่อ</a>
+    </nav>
+  </div>
+
+  <!-- ✅ MAIN CONTENT -->
+  <div class="container">
+    <h1>🎉 สุ่มรางวัด 🎉</h1>
+
+    <div class="wheel-group">
+      <div>
+        <div id="output2" class="wheel">--</div>
+        <div class="label">รางวัล 2 ตัว</div>
+      </div>
+      <div>
+        <div id="output3" class="wheel">---</div>
+        <div class="label">รางวัล 3 ตัว</div>
+      </div>
+      <div>
+        <div id="output4" class="wheel">----</div>
+        <div class="label">รางวัล 4 ตัว</div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button onclick="drawAll()">สุ่มพร้อมกัน</button>
+    </div>
+
+    <!-- ✅ HISTORY TABLE -->
+    <div class="history">
+      <h2>📜 ประวัติการออกรางวัล</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>วันเวลา</th>
+            <th>รางวัล 2 ตัว</th>
+            <th>รางวัล 3 ตัว</th>
+            <th>รางวัล 4 ตัว</th>
+          </tr>
+        </thead>
+        <tbody id="historyTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ✅ FOOTER -->
+  <footer>
+    © 2025 เว็บไซต์ออกรางวัล | สร้างโดย คุณมงคล
+  </footer>
+
+  <!-- ✅ SCRIPT -->
+  <script>
+    const output2 = document.getElementById("output2");
+    const output3 = document.getElementById("output3");
+    const output4 = document.getElementById("output4");
+    const historyTableBody = document.getElementById("historyTableBody");
+
+    function getRandomDigit() {
+      return Math.floor(Math.random() * 10);
+    }
+
+    function generateNumber(length) {
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += getRandomDigit();
+      }
+      return result;
+    }
+
+    function spinWheel(element, length, callback) {
+      let count = 0;
+      const interval = setInterval(() => {
+        element.textContent = generateNumber(length);
+        count++;
+        if (count > 20) {
+          clearInterval(interval);
+          const finalResult = generateNumber(length);
+          element.textContent = finalResult;
+          callback(finalResult);
+        }
+      }, 100);
+    }
+
+    function drawAll() {
+      let result2, result3, result4;
+
+      spinWheel(output2, 2, (r) => { result2 = r; checkDone(); });
+      spinWheel(output3, 3, (r) => { result3 = r; checkDone(); });
+      spinWheel(output4, 4, (r) => { result4 = r; checkDone(); });
+
+      let doneCount = 0;
+      function checkDone() {
+        doneCount++;
+        if (doneCount === 3) {
+          const row = document.createElement("tr");
+          const now = new Date().toLocaleString('th-TH');
+          row.innerHTML = `
+            <td>${now}</td>
+            <td>${result2}</td>
+            <td>${result3}</td>
+            <td>${result4}</td>
+          `;
+          historyTableBody.prepend(row);
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
